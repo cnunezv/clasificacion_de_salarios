@@ -37,6 +37,9 @@ public class Main {
                 case "5":
                     agregarEmpleado();
                     break;
+                case "6":
+                    PruebasOrdenamiento.ejecutarTodas();
+                    break;
                 case "0":
                     continuar = false;
                     break;
@@ -55,6 +58,7 @@ public class Main {
         System.out.println("3. Ordenar mostrando la traza de divisiones y mezclas");
         System.out.println("4. Cambiar de conjunto de datos (principal / alternativo)");
         System.out.println("5. Agregar un empleado");
+        System.out.println("6. Ejecutar casos de prueba");
         System.out.println("0. Salir");
     }
 
