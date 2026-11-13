@@ -15,6 +15,12 @@ public class OrdenadorEmpleados {
     private int llamadasRecursivas;
     private int mezclas;
     private long copiasAlBuffer;
+    private boolean mostrarTraza;
+
+    /** Si se activa, el algoritmo imprime cada división y cada mezcla. */
+    public void setMostrarTraza(boolean mostrarTraza) {
+        this.mostrarTraza = mostrarTraza;
+    }
 
     public long getComparaciones() {
         return comparaciones;
@@ -57,19 +63,26 @@ public class OrdenadorEmpleados {
             return;   // 0 o 1 elemento: ya está ordenado
         }
         Empleado[] buffer = new Empleado[empleados.length];   // memoria auxiliar para mezclar
-        mergeSort(empleados, buffer, 0, empleados.length);
+        mergeSort(empleados, buffer, 0, empleados.length, 0);
     }
 
     /** Ordena el tramo [inicio, fin) — el índice fin NO se incluye. */
-    private void mergeSort(Empleado[] a, Empleado[] buffer, int inicio, int fin) {
+    private void mergeSort(Empleado[] a, Empleado[] buffer, int inicio, int fin, int nivel) {
         llamadasRecursivas++;
         if (fin - inicio < 2) {
             return;   // caso base: un solo elemento
         }
         int medio = (inicio + fin) / 2;
-        mergeSort(a, buffer, inicio, medio);   // 1) ordenar mitad izquierda
-        mergeSort(a, buffer, medio, fin);      // 2) ordenar mitad derecha
-        mezclar(a, buffer, inicio, medio, fin); // 3) mezclar las dos mitades
+        if (mostrarTraza) {
+            System.out.println(sangria(nivel) + "Dividir " + tramo(a, inicio, fin)
+                    + "  ->  " + tramo(a, inicio, medio) + " | " + tramo(a, medio, fin));
+        }
+        mergeSort(a, buffer, inicio, medio, nivel + 1);   // 1) ordenar mitad izquierda
+        mergeSort(a, buffer, medio, fin, nivel + 1);      // 2) ordenar mitad derecha
+        mezclar(a, buffer, inicio, medio, fin);           // 3) mezclar las dos mitades
+        if (mostrarTraza) {
+            System.out.println(sangria(nivel) + "Mezclar -> " + tramo(a, inicio, fin));
+        }
     }
 
     /**
@@ -103,6 +116,28 @@ public class OrdenadorEmpleados {
         for (int p = inicio; p < fin; p++) {
             a[p] = buffer[p];
         }
+    }
+
+    /** Representa un tramo como [Álvaro 12,0M, Mariana 7,3M, ...] para la traza. */
+    private static String tramo(Empleado[] a, int inicio, int fin) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = inicio; i < fin; i++) {
+            if (i > inicio) {
+                sb.append(", ");
+            }
+            String primerNombre = a[i].getNombre().split(" ")[0];
+            sb.append(primerNombre).append(' ')
+              .append(String.format(java.util.Locale.US, "%.1fM", a[i].getSalario() / 1_000_000.0));
+        }
+        return sb.append(']').toString();
+    }
+
+    private static String sangria(int nivel) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nivel; i++) {
+            sb.append("   ");
+        }
+        return sb.toString();
     }
 
     /** Aplica el criterio y cuenta la comparación. */
