@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 public class Empleado {
 
-    private static final NumberFormat PESOS = NumberFormat.getIntegerInstance(new Locale("es", "CO"));
+    private static final NumberFormat PESOS = NumberFormat.getIntegerInstance(Locale.forLanguageTag("es-CO"));
 
     private final String identificacion;
     private final String nombre;
